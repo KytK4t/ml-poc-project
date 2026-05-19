@@ -1,0 +1,4 @@
+model_key,model_name,model_path,mae,rmse,r2,mape
+linear_reg,Linear Regression,/sessions/nice-brave-mccarthy/mnt/ml-poc-project/models/linear_reg.joblib,7.863659646681217,11.79695900741384,0.5489156021059262,380.31915661984596
+random_forest,Random Forest,/sessions/nice-brave-mccarthy/mnt/ml-poc-project/models/random_forest.joblib,2.5385720263000593,5.500798090655588,0.9019225707422295,33.57351006840521
+gradient_boosting,Gradient Boosting,/sessions/nice-brave-mccarthy/mnt/ml-poc-project/models/gradient_boosting.joblib,3.9634438336114837,6.980345046516911,0.8420675229447778,81.31601037867064
