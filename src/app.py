@@ -770,6 +770,42 @@ def page_modeles() -> None:
         )
         st.plotly_chart(appliquer_theme_graphique(fig, 320), use_container_width=True)
 
+    # --- Feature importance (Random Forest) ---
+    afficher_titre_section("Importance des features (Random Forest)")
+
+    rf_model = charger_modele(str(MODELS["random_forest"]["path"]))
+    if rf_model is not None:
+        feature_names = [
+            "year", "sex", "age", "gdp_per_capita",
+            "HDI_for_year", "population", "generation", "country_encoded",
+        ]
+        # Le modele est un Pipeline : l'estimateur est la derniere etape
+        estimateur = rf_model[-1] if hasattr(rf_model, '__getitem__') else rf_model
+        if hasattr(estimateur, "feature_importances_"):
+            importances = estimateur.feature_importances_
+            fi_df = pd.DataFrame({
+                "feature": feature_names,
+                "importance": importances,
+            }).sort_values("importance", ascending=True)
+
+            fig = px.bar(
+                fi_df, x="importance", y="feature",
+                orientation="h",
+                color="importance",
+                color_continuous_scale=["#B7E4C7", "#2D6A4F", "#1B4332"],
+            )
+            fig.update_layout(
+                xaxis_title="Importance",
+                yaxis_title="",
+                coloraxis_showscale=False,
+                margin=dict(t=30, b=40, l=130, r=20),
+            )
+            st.plotly_chart(appliquer_theme_graphique(fig, 380), use_container_width=True)
+        else:
+            st.info("Le modele Random Forest n'expose pas de feature importances.")
+    else:
+        st.info("Modele Random Forest introuvable — lancez l'entrainement d'abord.")
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Page 4 : Prediction
