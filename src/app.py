@@ -500,19 +500,40 @@ def page_analyse() -> None:
 
     df = charger_donnees_brutes()
 
-    # --- Distribution ---
-    afficher_titre_section("Distribution du taux de suicide")
+    # --- Carte du monde ---
+    afficher_titre_section("Carte mondiale du taux de suicide")
 
-    fig = px.histogram(
-        df, x="suicides_per_100k", nbins=60,
-        color_discrete_sequence=[COULEURS["primaire"]],
-        opacity=0.85,
+    pays_taux = df.groupby("country")["suicides_per_100k"].mean().reset_index()
+    pays_taux.columns = ["country", "taux_moyen"]
+
+    fig = px.choropleth(
+        pays_taux,
+        locations="country",
+        locationmode="country names",
+        color="taux_moyen",
+        color_continuous_scale=["#D8F3DC", "#52B788", "#2D6A4F", "#1B4332"],
+        hover_name="country",
+        labels={"taux_moyen": "Suicides / 100k"},
     )
     fig.update_layout(
-        xaxis_title="Suicides pour 100k habitants",
-        yaxis_title="Frequence",
+        geo=dict(
+            showframe=False,
+            showcoastlines=True,
+            coastlinecolor="#CBD5E1",
+            projection_type="natural earth",
+            bgcolor="white",
+            landcolor="#F1F5F9",
+        ),
+        paper_bgcolor="white",
+        margin=dict(t=10, b=10, l=10, r=10),
+        height=450,
+        coloraxis_colorbar=dict(
+            title="Taux moyen",
+            thickness=15,
+            len=0.6,
+        ),
     )
-    st.plotly_chart(appliquer_theme_graphique(fig, 350), use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True)
 
     # --- Par sexe & age ---
     afficher_titre_section("Taux moyen par sexe et tranche d'age")
